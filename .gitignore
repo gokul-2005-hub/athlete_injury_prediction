@@ -1,0 +1,56 @@
+# Python virtual environments
+
+venv/
+env/
+ENV/
+
+# Python cache
+
+**pycache**/
+*.pyc
+*.pyo
+*.pyd
+
+# Jupyter
+
+.ipynb_checkpoints/
+
+# Streamlit
+
+.streamlit/secrets.toml
+# NOTE: .streamlit/config.toml is NOT ignored — it contains maxUploadSize
+# needed for video uploads in the dashboard.
+
+# CatBoost logs
+
+catboost_info/
+
+# ML artifacts (trained models)
+
+models/
+*.pkl
+*.keras
+*.h5
+
+# Datasets
+
+data/
+
+# Temporary files
+
+temp/
+results/
+*.log
+
+# Environment variables
+
+.env
+
+# IDE settings
+
+.vscode/
+
+# OS junk
+
+.DS_Store
+Thumbs.db

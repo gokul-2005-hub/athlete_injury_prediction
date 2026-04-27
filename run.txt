@@ -1,0 +1,62 @@
+# Athlete Injury Prediction — Full Pipeline Commands (v4 — Two-Channel Hybrid)
+# ============================================================================
+
+# 1. Activate the virtual environment
+.\venv\Scripts\activate         # Windows
+# source venv/bin/activate      # macOS / Linux
+
+# 2. Re-generate synthetic data (v4: risk now spans 5–95 with realistic dynamics)
+python -m src.utils.data_generator
+# Expected output:
+#   Risk range:    0.0 – 100.0  (mean ~44, std ~18)
+#   Above 80: ~3%   Below 20: ~11%
+#   Fatigue level mean ~4.4 (was pinned at 9.0)
+#   Wellness mean    ~5.6 (was pinned at 1.5)
+
+# 3. Build combined dataset (v4: NO fake CV-feature generation)
+python -m src.utils.build_combined_dataset
+# Expected: ~50 columns (was 62 in v3 — the 9 fake CV columns are gone)
+
+# 4. Train ALL models on the new data
+#    Run in this order; total ~10–15 min on a typical laptop CPU.
+python -m src.ml.model_trainer
+python -m src.ml.ensemble_model
+python -m src.ml.lstm_trainer
+python -m src.ml.transformer_trainer
+python -m src.ml.train_hazard_model
+
+# 5. Wipe stale test athlete data (predictions from v3 models are no longer valid)
+#    Windows:
+del /q data\history\athlete_*.csv
+#    macOS / Linux:
+# rm -f data/history/athlete_*.csv
+
+# 6. Run the dashboards (separate terminals)
+streamlit run dashboard/synthetic_app.py
+streamlit run dashboard/realworld_app.py
+
+
+# ── What changed in v4 (Option C refactor) ─────────────────────────────────
+#
+# Architecture is now TWO CHANNELS:
+#
+#   Channel 1 — Workload-ML (~50 features, no CV columns)
+#     Stacked Ensemble + LSTM + Transformer + Hazard
+#     → workload_risk
+#
+#   Channel 2 — Biomechanical-Rules (NEW)
+#     Rule-based score from MediaPipe pose statistics
+#     → biomech_risk
+#
+#   final_risk = (1 - α_eff) * workload_risk + α_eff * biomech_risk
+#   α_eff      = clamp(BIOMECH_VIDEO_WEIGHT × confidence, 0, 0.40)
+#
+# Files changed:
+#   src/utils/data_generator.py              (recalibrated risk dynamics)
+#   src/utils/build_combined_dataset.py      (removed generate_video_features)
+#   src/cv/biomech_risk_module.py            NEW — rule-based biomech channel
+#   src/ml/hybrid_predictor.py               (two-channel predict signature)
+#   src/realtime/feature_builder.py          (CV defaults removed)
+#   config.py                                (BIOMECH_VIDEO_WEIGHT, etc.)
+#   dashboard/realworld_app.py               (3-gauge layout, rules panel)
+#   dashboard/synthetic_app.py               (Live Demo shows biomech voice)

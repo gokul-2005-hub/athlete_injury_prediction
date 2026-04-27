@@ -1,0 +1,40 @@
+# Athlete Injury Prediction — Python requirements
+# Python 3.10 required (TensorFlow 2.13 constraint)
+# Install: pip install -r requirements.txt
+
+# ── Core data science ─────────────────────────────────────────────
+numpy==1.24.3
+pandas==2.0.3
+scipy>=1.10.0,<2.0.0
+scikit-learn==1.3.0
+
+# ── Machine learning models ───────────────────────────────────────
+xgboost==2.0.0
+lightgbm>=4.0.0
+catboost>=1.2.0
+scikit-survival>=0.22.0
+
+# ── Deep learning ─────────────────────────────────────────────────
+tensorflow==2.13.0
+keras==2.13.1
+
+# ── Dashboard & visualisation ─────────────────────────────────────
+streamlit==1.26.0
+plotly==5.15.0
+matplotlib==3.7.2
+seaborn==0.12.2
+
+# ── Utilities ─────────────────────────────────────────────────────
+joblib==1.3.1
+python-dotenv==1.0.0
+
+# ── API ───────────────────────────────────────────────────────────
+fastapi==0.100.0
+uvicorn==0.23.1
+
+# ── Computer vision (optional — for real video analysis) ──────────
+opencv-python==4.8.0.74
+mediapipe==0.10.8
+
+# ── Hyperparameter tuning (optional) ─────────────────────────────
+# optuna>=3.0.0
